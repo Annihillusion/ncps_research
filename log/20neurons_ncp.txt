@@ -1,0 +1,51 @@
+alloc!
+Epoch 1, train_loss=1.306, val_loss=1.097, val_acc=78.77%
+Mean return 0.4 (n=10)
+Epoch 2, train_loss=0.9938, val_loss=0.8909, val_acc=84.16%
+Mean return 0.8 (n=10)
+Epoch 3, train_loss=0.8178, val_loss=0.7515, val_acc=87.90%
+Mean return 7.7 (n=10)
+Epoch 4, train_loss=0.7042, val_loss=0.6603, val_acc=89.47%
+Mean return 8.4 (n=10)
+Epoch 5, train_loss=0.618, val_loss=0.578, val_acc=90.05%
+Mean return 12.7 (n=10)
+Epoch 6, train_loss=0.5465, val_loss=0.5145, val_acc=89.82%
+Mean return 17.4 (n=10)
+Epoch 7, train_loss=0.487, val_loss=0.4662, val_acc=89.15%
+Mean return 6.8 (n=10)
+Epoch 8, train_loss=0.4354, val_loss=0.4126, val_acc=91.49%
+Mean return 26.5 (n=10)
+Epoch 9, train_loss=0.3908, val_loss=0.3725, val_acc=92.29%
+Mean return 42.9 (n=10)
+Epoch 10, train_loss=0.3526, val_loss=0.3433, val_acc=91.97%
+Mean return 20.7 (n=10)
+Epoch 11, train_loss=0.3196, val_loss=0.3091, val_acc=93.14%
+Mean return 56.9 (n=10)
+Epoch 12, train_loss=0.2906, val_loss=0.2846, val_acc=93.54%
+Mean return 48.2 (n=10)
+Epoch 13, train_loss=0.2653, val_loss=0.2671, val_acc=93.63%
+Mean return 46.3 (n=10)
+Epoch 14, train_loss=0.243, val_loss=0.2448, val_acc=94.12%
+Mean return 44.7 (n=10)
+Epoch 15, train_loss=0.2235, val_loss=0.2291, val_acc=94.25%
+Mean return 21.7 (n=10)
+Epoch 16, train_loss=0.2061, val_loss=0.2206, val_acc=94.11%
+Mean return 26.5 (n=10)
+Epoch 17, train_loss=0.1908, val_loss=0.2062, val_acc=94.38%
+Mean return 42.5 (n=10)
+Epoch 18, train_loss=0.177, val_loss=0.1987, val_acc=94.34%
+Mean return 34.5 (n=10)
+Epoch 19, train_loss=0.1642, val_loss=0.1871, val_acc=94.60%
+Mean return 37.7 (n=10)
+Epoch 20, train_loss=0.1527, val_loss=0.1807, val_acc=94.62%
+Mean return 41.2 (n=10)
+Epoch 21, train_loss=0.1424, val_loss=0.1747, val_acc=94.87%
+Mean return 63.1 (n=10)
+Epoch 22, train_loss=0.1333, val_loss=0.1694, val_acc=95.00%
+Mean return 38.1 (n=10)
+Epoch 23, train_loss=0.1245, val_loss=0.1654, val_acc=95.11%
+Mean return 89.4 (n=10)
+Epoch 24, train_loss=0.1166, val_loss=0.1637, val_acc=94.97%
+Mean return 65.0 (n=10)
+Epoch 25, train_loss=0.1096, val_loss=0.1604, val_acc=95.13%
+Mean return 69.6 (n=10)
