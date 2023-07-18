@@ -91,3 +91,10 @@ def run_closed_loop(model, env, num_episodes=None):
                     num_episodes = num_episodes - 1
                     if num_episodes == 0:
                         return returns
+
+
+def save_wiring(model):
+    adj_mat = model.rnn._wiring.adjacency_matrix
+    sen_adj_mat = model.rnn._wiring.sensory_adjacency_matrix
+    np.savetxt('saved_model/adj_mat.csv', adj_mat, delimiter=',')
+    np.savetxt('saved_model/sen_adj_mat.csv', sen_adj_mat, delimiter=',')

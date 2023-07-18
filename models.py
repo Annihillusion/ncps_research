@@ -30,6 +30,7 @@ class ConvLTC(nn.Module):
     def __init__(self, n_neurons=64, n_actions=4, connect_policy='ncp'):
         super().__init__()
         self.conv_block = ConvBlock()
+        #self.linear = nn.Linear(256, 4)
         if connect_policy == 'ncp':
             self.rnn = LTC(256, AutoNCP(n_neurons, n_actions), batch_first=True)
         elif connect_policy == 'fc':
@@ -45,5 +46,7 @@ class ConvLTC(nn.Module):
         x = self.conv_block(x)  # apply conv block to merged data
         # Separate time and batch dimension again
         x = x.view(batch_size, seq_len, *x.shape[1:])
+        hx = None
+        #x = self.linear(x)
         x, hx = self.rnn(x, hx)  # hx is the hidden state of the RNN
         return x, hx

@@ -12,16 +12,18 @@ from models import ConvLTC
 from utils import *
 
 BATCH_SIZE = 64
-NUM_EPOCHS = 25
+NUM_EPOCHS = 50
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_neurons', default=64, type=int)
-    parser.add_argument('--connect_policy', default='ncp' ,type=str)
+    parser.add_argument('--connect_policy', default='ncp', type=str)
     args = parser.parse_args()
 
-    path = f'log/{args.num_neurons}neurons_{args.connect_policy}.txt'
-    sys.stdout = open(path, 'w')
+    # Names of log and saved_model
+    PATH = f'log/{args.num_neurons}neurons_{args.connect_policy}_noRecur.txt'
+    MODEL_NAME = f'saved_model/{args.num_neurons}neurons_{args.connect_policy}_noRecur.pkl'
+    sys.stdout = open(PATH, 'w')
 
     env = gym.make("ALE/Breakout-v5")
     env = wrap_deepmind(env)
@@ -39,6 +41,8 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
+    # save_wiring(model)
+
     max_return = 0
     for epoch in range(NUM_EPOCHS):
         # Train
@@ -53,4 +57,4 @@ if __name__ == "__main__":
         print(f"Mean return {np.mean(returns)} (n={len(returns)})")
         if np.mean(returns) > max_return:
             max_return = np.mean(returns)
-            torch.save(model.state_dict(), f'saved_model/{args.num_neurons}neurons_{args.connect_policy}_{max_return:.2f}.pkl')
+            torch.save(model.state_dict(), MODEL_NAME)
