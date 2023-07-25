@@ -8,8 +8,8 @@ import sys
 from ray.rllib.env.wrappers.atari_wrappers import wrap_deepmind
 from ncps.datasets.torch import AtariCloningDataset
 
-from models import ConvLTC
-from utils import *
+from utils.models import ConvLTC
+from utils.util import *
 
 BATCH_SIZE = 64
 NUM_EPOCHS = 50

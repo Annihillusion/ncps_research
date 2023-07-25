@@ -1,8 +1,8 @@
 import gym
 
 from ray.rllib.env.wrappers.atari_wrappers import wrap_deepmind
-from utils import *
-from models import ConvLTC
+from utils.util import *
+from utils.models import ConvLTC
 
 NUM_NEURONS = 8
 

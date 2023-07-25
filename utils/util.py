@@ -13,7 +13,8 @@
 # limitations under the License.
 import torch
 import numpy as np
-
+import networkx as nx
+import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 def eval(model, valloader, criterion):
@@ -93,8 +94,70 @@ def run_closed_loop(model, env, num_episodes=None):
                         return returns
 
 
-def save_wiring(model):
-    adj_mat = model.rnn._wiring.adjacency_matrix
-    sen_adj_mat = model.rnn._wiring.sensory_adjacency_matrix
-    np.savetxt('saved_model/adj_mat.csv', adj_mat, delimiter=',')
-    np.savetxt('saved_model/sen_adj_mat.csv', sen_adj_mat, delimiter=',')
+def get_graph(self, include_sensory_neurons=True):
+        if not self.is_built():
+            raise ValueError(
+                "Wiring is not built yet.\n"
+                "This is probably because the input shape is not known yet.\n"
+                "Consider calling the model.build(...) method using the shape of the inputs."
+            )
+        # Only import networkx package if we really need it
+        import networkx as nx
+
+        DG = nx.DiGraph()
+        for i in range(self.units):
+            neuron_type = self.get_type_of_neuron(i)
+            DG.add_node("neuron_{:d}".format(i), neuron_type=neuron_type)
+        if include_sensory_neurons == True:
+            for i in range(self.input_dim):
+                DG.add_node("sensory_{:d}".format(i), neuron_type="sensory")
+
+        erev = self.adjacency_matrix
+        sensory_erev = self.sensory_adjacency_matrix
+
+        if include_sensory_neurons == True:
+            for src in range(self.input_dim):
+                for dest in range(self.units):
+                    if self.sensory_adjacency_matrix[src, dest] != 0:
+                        polarity = (
+                            "excitatory" if sensory_erev[src, dest] >= 0.0 else "inhibitory"
+                        )
+                        DG.add_edge(
+                            "sensory_{:d}".format(src),
+                            "neuron_{:d}".format(dest),
+                            polarity=polarity,
+                        )
+
+        for src in range(self.units):
+            for dest in range(self.units):
+                if self.adjacency_matrix[src, dest] != 0:
+                    polarity = "excitatory" if erev[src, dest] >= 0.0 else "inhibitory"
+                    DG.add_edge(
+                        "neuron_{:d}".format(src),
+                        "neuron_{:d}".format(dest),
+                        polarity=polarity,
+                    )
+        return DG
+
+def draw_networks(wiring):
+    layer_size = [len(wiring.get_neurons_of_layer(i)) for i in range(wiring.num_layers)]
+    id = iter(np.arange(wiring.units)[::-1])
+    layer_color = ['blue', 'grey', 'orange']
+    synapse_colors = {"excitatory": "green", "inhibitory": "red"}
+    layers = [[f'neuron_{next(id)}' for _ in range(size)] for size in layer_size]
+    G = nx.Graph()
+    for i, layer in enumerate(layers):
+        G.add_nodes_from(layer, layer=i)
+    color = [layer_color[data["layer"]] for v, data in G.nodes(data=True)]
+    pos = nx.multipartite_layout(G, subset_key="layer")
+    # plt.figure(figsize=(8, 8))
+    nx.draw(G, pos, node_color=color, with_labels=False)
+
+    G = get_graph(wiring, include_sensory_neurons=False)
+    for node1, node2, data in G.edges(data=True):
+            polarity = data["polarity"]
+            edge_color = synapse_colors[polarity]
+            nx.draw_networkx_edges(G, pos, [(node1, node2)], edge_color=edge_color)
+
+    plt.axis("equal")
+    plt.show()
