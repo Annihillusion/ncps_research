@@ -1,5 +1,5 @@
 conda activate ncps
-cd E:\ncps_research
+cd D:\ncps_research
 python main.py --num_neurons 28 --connect_policy ncp
 python main.py --num_neurons 24 --connect_policy ncp
 python main.py --num_neurons 20 --connect_policy ncp

@@ -12,7 +12,7 @@ from utils.models import ConvLTC
 from utils.util import *
 
 BATCH_SIZE = 64
-NUM_EPOCHS = 50
+NUM_EPOCHS = 30
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -21,8 +21,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Names of log and saved_model
-    PATH = f'log/{args.num_neurons}neurons_{args.connect_policy}_noRecur.txt'
-    MODEL_NAME = f'saved_model/{args.num_neurons}neurons_{args.connect_policy}_noRecur.pkl'
+    PATH = f'log/{args.num_neurons}neurons_{args.connect_policy}.txt'
+    MODEL_NAME = f'saved_model/{args.num_neurons}neurons_{args.connect_policy}.pkl'
     sys.stdout = open(PATH, 'w')
 
     env = gym.make("ALE/Breakout-v5")
@@ -41,7 +41,7 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
 
-    # save_wiring(model)
+    save_wiring(model, args.num_neurons)
 
     max_return = 0
     for epoch in range(NUM_EPOCHS):

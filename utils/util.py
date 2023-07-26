@@ -159,5 +159,13 @@ def draw_networks(wiring):
             edge_color = synapse_colors[polarity]
             nx.draw_networkx_edges(G, pos, [(node1, node2)], edge_color=edge_color)
 
-    plt.axis("equal")
+    plt.savefig(f"img/32to8/{wiring.units}_network")
+    #plt.axis("equal")
     plt.show()
+
+
+def save_wiring(model, num):
+    adj = model.rnn._wiring.adjacency_matrix
+    adj_sen = model.rnn._wiring.sensory_adjacency_matrix
+    np.savetxt(f'wiring/{num}adj.csv', adj, delimiter=',')
+    np.savetxt(f'wiring/{num}adj_sen.csv', adj_sen, delimiter=',')
