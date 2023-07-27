@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from utils.models import ConvLTC
 from utils.util import draw_networks
 
-NUM_NEURONS = 12
-MODEl_PATH = f'saved_model/{NUM_NEURONS}neurons_ncp_50epochs.pkl'
+NUM_NEURONS = 16
+MODEl_PATH = f'saved_model/{NUM_NEURONS}neurons_ncp_60.50.pkl'
 
 if __name__ == '__main__':
     model = ConvLTC(NUM_NEURONS)
@@ -17,16 +17,16 @@ if __name__ == '__main__':
     #wiring.adjacency_matrix = adj
     # adj_sen = wiring.sensory_adjacency_matrix
     weight = np.abs(model.rnn.rnn_cell.w.detach().numpy()*adj)
-    weight = np.flipud(weight)
-    weight = np.fliplr(weight)
+    # weight = np.flipud(weight)
+    # weight = np.fliplr(weight)
 
-    draw_networks(wiring)
+    draw_networks(wiring, weight)
 
     fig, ax = plt.subplots()
     pos = ax.imshow(weight)
     fig.colorbar(pos, ax=ax)
-    plt.savefig(f'img/32to8/{wiring.units}_weights.png')
-    plt.show()
+    #plt.savefig(f'img/32to8/{wiring.units}_weights.png')
+    #plt.show()
 
 
 

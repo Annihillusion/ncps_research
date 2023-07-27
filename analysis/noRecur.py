@@ -3,7 +3,7 @@ import numpy as np
 import os
 import re
 
-log_dir = '/Users/annihillusion/Workflow/ncps_research/data_for_draw/noRecur'
+log_dir = 'D:\\ncps_research\\data_for_draw\\noRecur'
 
 def extract_record(log_folder, file_name):
     file_path = os.path.join(log_folder, file_name)
@@ -47,5 +47,5 @@ sub_draw(1, 0, 20)
 sub_draw(1, 1, 24)
 sub_draw(1, 2, 28)
 
-plt.savefig('img/noRecur.png', dpi=200)
+plt.savefig('../img/noRecur.png', dpi=200)
 plt.show()

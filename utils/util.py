@@ -94,7 +94,7 @@ def run_closed_loop(model, env, num_episodes=None):
                         return returns
 
 
-def get_graph(self, include_sensory_neurons=True):
+def get_graph(self, weight, include_sensory_neurons=True):
         if not self.is_built():
             raise ValueError(
                 "Wiring is not built yet.\n"
@@ -105,6 +105,7 @@ def get_graph(self, include_sensory_neurons=True):
         import networkx as nx
 
         DG = nx.DiGraph()
+        alpha = (weight / weight.max()) * 0.9 + 0.1
         for i in range(self.units):
             neuron_type = self.get_type_of_neuron(i)
             DG.add_node("neuron_{:d}".format(i), neuron_type=neuron_type)
@@ -131,15 +132,20 @@ def get_graph(self, include_sensory_neurons=True):
         for src in range(self.units):
             for dest in range(self.units):
                 if self.adjacency_matrix[src, dest] != 0:
+                    src_type = self.get_type_of_neuron(src)
+                    dest_type = self.get_type_of_neuron(dest)
+                    arrow = '->' if (src_type=='command' and dest_type=='command') else '-'
                     polarity = "excitatory" if erev[src, dest] >= 0.0 else "inhibitory"
                     DG.add_edge(
                         "neuron_{:d}".format(src),
                         "neuron_{:d}".format(dest),
                         polarity=polarity,
+                        alpha=alpha[src, dest],
+                        arrow=arrow
                     )
         return DG
 
-def draw_networks(wiring):
+def draw_networks(wiring, weight):
     layer_size = [len(wiring.get_neurons_of_layer(i)) for i in range(wiring.num_layers)]
     id = iter(np.arange(wiring.units)[::-1])
     layer_color = ['blue', 'grey', 'orange']
@@ -151,15 +157,20 @@ def draw_networks(wiring):
     color = [layer_color[data["layer"]] for v, data in G.nodes(data=True)]
     pos = nx.multipartite_layout(G, subset_key="layer")
     # plt.figure(figsize=(8, 8))
-    nx.draw(G, pos, node_color=color, with_labels=False)
 
-    G = get_graph(wiring, include_sensory_neurons=False)
+    act = np.genfromtxt("data_for_draw/16act.csv", delimiter=',')[2]
+    act = act[::-1]
+    nx.draw(G, pos, node_color=act, cmap='viridis', node_size=600, with_labels=False)
+
+    G = get_graph(wiring, weight, include_sensory_neurons=False)
     for node1, node2, data in G.edges(data=True):
             polarity = data["polarity"]
             edge_color = synapse_colors[polarity]
-            nx.draw_networkx_edges(G, pos, [(node1, node2)], edge_color=edge_color)
+            alpha = data["alpha"]
+            arrow = data["arrow"]
+            nx.draw_networkx_edges(G, pos, [(node1, node2)], edge_color=edge_color, alpha=alpha, node_size=600, arrowstyle=arrow, width=1+alpha*2)
 
-    plt.savefig(f"img/32to8/{wiring.units}_network")
+    #plt.savefig(f"img/32to8/{wiring.units}_network")
     #plt.axis("equal")
     plt.show()
 
