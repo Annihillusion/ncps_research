@@ -15,6 +15,7 @@ import torch
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from tqdm import tqdm
 
 def eval(model, valloader, criterion):
@@ -145,7 +146,8 @@ def get_graph(self, weight, include_sensory_neurons=True):
                     )
         return DG
 
-def draw_networks(wiring, weight):
+
+def draw_networks(wiring, weight, activation, act_idx, path='.'):
     layer_size = [len(wiring.get_neurons_of_layer(i)) for i in range(wiring.num_layers)]
     id = iter(np.arange(wiring.units)[::-1])
     layer_color = ['blue', 'grey', 'orange']
@@ -158,9 +160,12 @@ def draw_networks(wiring, weight):
     pos = nx.multipartite_layout(G, subset_key="layer")
     # plt.figure(figsize=(8, 8))
 
-    act = np.genfromtxt("data_for_draw/16act.csv", delimiter=',')[2]
+    action_dict = {0: "RIGHT", 1: "LEFT"}
+    act = activation[act_idx]
     act = act[::-1]
-    nx.draw(G, pos, node_color=act, cmap='viridis', node_size=600, with_labels=False)
+    node_size = 800 - 500*(wiring.units - 8)/24
+    # node_size = 300
+    nx.draw(G, pos, node_color=act, cmap='viridis', node_size=node_size, with_labels=False)
 
     G = get_graph(wiring, weight, include_sensory_neurons=False)
     for node1, node2, data in G.edges(data=True):
@@ -168,11 +173,15 @@ def draw_networks(wiring, weight):
             edge_color = synapse_colors[polarity]
             alpha = data["alpha"]
             arrow = data["arrow"]
-            nx.draw_networkx_edges(G, pos, [(node1, node2)], edge_color=edge_color, alpha=alpha, node_size=600, arrowstyle=arrow, width=1+alpha*2)
+            nx.draw_networkx_edges(G, pos, [(node1, node2)], edge_color=edge_color, alpha=alpha, node_size=node_size, arrowstyle=arrow, width=1+alpha*1.5)
 
-    #plt.savefig(f"img/32to8/{wiring.units}_network")
+    # pc = mpl.collections.PatchCollection(nodes, cmap='viridis')
+    # ax = plt.gca()
+    # ax.set_axis_off()
+    # plt.colorbar(pc, ax=ax)
+    plt.savefig(path+f'_{action_dict[act_idx]}.png')
     #plt.axis("equal")
-    plt.show()
+    #plt.show()
 
 
 def save_wiring(model, num):

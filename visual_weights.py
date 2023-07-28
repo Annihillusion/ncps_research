@@ -1,13 +1,23 @@
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 from utils.models import ConvLTC
 from utils.util import draw_networks
 
-NUM_NEURONS = 16
-MODEl_PATH = f'saved_model/{NUM_NEURONS}neurons_ncp_60.50.pkl'
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_neurons', default=8, type=int)
+    parser.add_argument('--suffix', default='', type=str)
+    args = parser.parse_args()
+
+    NUM_NEURONS = args.num_neurons
+    MODEl_PATH = f'saved_model/{NUM_NEURONS}neurons_ncp{args.suffix}.pkl'
+    ACT_PATH = f'record/{NUM_NEURONS}act{args.suffix}.csv'
+    # FIG_PATH = f'img/network{args.suffix}/{NUM_NEURONS}_network{args.suffix}'
+    FIG_PATH = '.'
+
     model = ConvLTC(NUM_NEURONS)
     model.load_state_dict(torch.load(MODEl_PATH, map_location=torch.device('cpu')))
     wiring = model.rnn._wiring
@@ -20,12 +30,15 @@ if __name__ == '__main__':
     # weight = np.flipud(weight)
     # weight = np.fliplr(weight)
 
-    draw_networks(wiring, weight)
+    activation = np.genfromtxt(ACT_PATH, delimiter=',')
+    draw_networks(wiring, weight, activation, 0, FIG_PATH)
+    plt.clf()
+    draw_networks(wiring, weight, activation, 1, FIG_PATH)
 
-    fig, ax = plt.subplots()
-    pos = ax.imshow(weight)
-    fig.colorbar(pos, ax=ax)
-    #plt.savefig(f'img/32to8/{wiring.units}_weights.png')
+    # fig, ax = plt.subplots()
+    # pos = ax.imshow(weight)
+    # fig.colorbar(pos, ax=ax)
+    # plt.savefig()
     #plt.show()
 
 

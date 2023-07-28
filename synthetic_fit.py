@@ -1,5 +1,7 @@
 import torch
 import numpy as np
+import argparse
+import sys
 from torch.utils.data import DataLoader, random_split
 from tqdm import tqdm
 from ncps.torch import LTC
@@ -52,14 +54,25 @@ def eval(model, valloader, criterion):
 
 
 if __name__ == '__main__':
-    EPOCHS = 10
+    EPOCHS = 1000
     LR = 1e-3
-    BATCH_SIZE = 4
+    BATCH_SIZE = 8
     NUM_WORKERS = 4
     DATA_DIR = "E:/Celegans-ForwardCrawling-RNNs/Dataset1"
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_neurons', default=64, type=int)
+    parser.add_argument('--connect_policy', default='ncp', type=str)
+    args = parser.parse_args()
+
+    # Names of log and saved_model
+    NAME = f'{args.num_neurons}neurons_{args.connect_policy}_synfix'
+    PATH = 'log/' + NAME + '.txt'
+    MODEL_NAME = 'saved_model/' + NAME + '.pkl'
+    sys.stdout = open(PATH, 'w')
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = LTC(4, AutoNCP(8, 4), batch_first=True).to(device)
+    model = LTC(4, AutoNCP(args.num_neurons, 4), batch_first=True).to(device)
 
     dataset = NeuronDataset(root_dir=DATA_DIR)
     train_num = int(len(dataset) * 0.8)
@@ -70,6 +83,7 @@ if __name__ == '__main__':
     criterion = torch.nn.MSELoss(reduction='sum')
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
 
+    max_loss = np.inf
     for epoch in range(EPOCHS):
         # Train
         train_loss = train_one_epoch(model, train_loader, criterion, optimizer)
@@ -78,6 +92,6 @@ if __name__ == '__main__':
         val_loss = eval(model, val_loader, criterion)
         print(f"Epoch {epoch+1}, train_loss={train_loss:0.4g}, val_loss={val_loss:0.4g}")
 
-        # if np.mean(returns) > max_return:
-        #     max_return = np.mean(returns)
-        #     torch.save(model.state_dict(), MODEL_NAME)
+        if val_loss < max_loss:
+            max_loss = val_loss
+            torch.save(model.state_dict(), MODEL_NAME)
